@@ -14,8 +14,8 @@ const ProfesorSchema = new Schema({
   vecesDictado: { type: Number, default: 0 },
   calificacion: { type: Number },
   email: { type: String, required: true },
-  ingresado: { type: Date, default: Date.now() }
-
+  ingresado: { type: Date, default: Date.now() },
+  isVerified:{ type:Boolean,default:false}
 });
 
 ProfesorSchema.methods.encryptPassword = async (password) => {

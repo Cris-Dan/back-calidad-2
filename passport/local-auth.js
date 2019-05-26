@@ -3,6 +3,8 @@ const LocalStrategy = require('passport-local').Strategy;
 const Alumno = require('../models/Alumno');
 const Profesor = require('../models/Profesor');
 
+const emailer = require('./email-confirmation/emailer');
+
 passport.serializeUser((alumno, done) => {
     done(null, alumno._id);
 });
@@ -23,12 +25,12 @@ passport.use('local-register-alumno', new LocalStrategy({
     const repetido = await Alumno.findOne({ username: username });
 
     if (repetido) {
-        return done(null, false);
+        return done(null, false,{message:'Username Repetido'});
     }
 
     const emailRepetido = await Alumno.findOne({ email });
     if (emailRepetido) {
-        return done(null, false);
+        return done(null, false,{message:'Email Repetido'});
     }
 
     const alumno = new Alumno();
@@ -38,21 +40,29 @@ passport.use('local-register-alumno', new LocalStrategy({
     alumno.lastname = req.body.lastname;
     alumno.email = req.body.email;
     await alumno.save();
+
+    emailer(alumno,req);
+
     return done(null, alumno);
 
 }));
 
 passport.use('local-login-alumno', new LocalStrategy({
-    usernameField: 'username',
+    usernameField: 'email',
     passwordField: 'password',
-    passReqToCallback: true
-}, async (req, username, password, done) => {
-    const alumno = await Alumno.findOne({ username: username });
+    passReqToCallback:true
+}, async (req,email, password, done) => {
+    const alumno = await Alumno.findOne({ email });
     if (!alumno) {
-        return done(null, false);
+        return done(null, false,{message:"Correo Incorrecto"});
     }
+    //Verifica el password del alumno
     if (!alumno.comparePassword(password, alumno.password)) {
-        return done(null, false);
+        return done(null, false,{message:"Password Incorrecto"});
+    }//Corrobora la comprobacion del email
+    if(alumno.isVerified!=true)
+    {
+        return done(null,false,{message:"Correo sin confirmar"});
     }
     return done(null,alumno);
 
@@ -83,6 +93,7 @@ passport.use('local-register-profesor', new LocalStrategy({
     profesor.lastname = req.body.lastname;
     profesor.email = req.body.email;
     await profesor.save();
+
     return done(null, profesor);
 
 }));

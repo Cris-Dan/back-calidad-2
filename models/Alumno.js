@@ -7,9 +7,9 @@ const AlumnoSchema = new Schema({
   password: { type: String, required: true },
   firstname: { type: String },
   lastname: { type: String },
-  email: { type: String },
-  ingresado: { type: Date, default: Date.now() }
-
+  email: { type: String,required:true},
+  ingresado: { type: Date, default: Date.now() },
+  isVerified:{ type:Boolean, default: false,required:true}
 });
 
 AlumnoSchema.methods.encryptPassword = async (password) => {

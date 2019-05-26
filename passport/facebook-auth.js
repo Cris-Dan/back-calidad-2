@@ -2,8 +2,8 @@ const passport = require('passport');
 const FacebookStrategy = require('passport-facebook').Strategy;
 const Alumno = require('../models/Alumno');
 passport.use(new FacebookStrategy({
-    clientID: process.env.FACEBOOK_APP_ID,
-    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    clientID: '392577364672451',
+    clientSecret: '45dabf86f2b2d1ab7c0c88292b322f92',
     callbackURL: "http://localhost:3000/api/facebook/callback"
 },
     async (accessToken, refreshToken, profile, done) => {
