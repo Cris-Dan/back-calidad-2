@@ -32,7 +32,7 @@ app.use(connectFlash());
 //rutas
 app.use('/api',require('./routes/alumno'));
 app.use('/api',require('./routes/profesor'));
-
+app.use('/api',require('./routes/curso'));
 //iniciar
 app.listen(app.get('port'), () => {
     console.log("servidor en puerto: " + app.get('port'));
